@@ -85,7 +85,7 @@ blueprint:
           step: 1
 
     delay_temperature_stop:
-      default: 10
+      default: 1
       name: Delay temperature stop
       description: 'Set the climate shutdown delay since the target temperature has been reached.'
       selector:
