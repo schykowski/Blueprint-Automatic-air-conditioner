@@ -25,11 +25,11 @@ blueprint:
 
     set_temperature_climate:
       name: Set temperature climate
-      default: 25
+      default: 19
       description: 'Select the temperature to be set at climate.'
       selector:
         number:
-          min: 15
+          min: 16
           max: 30
           unit_of_measurement: °C
           mode: slider
@@ -38,14 +38,13 @@ blueprint:
     hvac_modes:
       name: Hvac modes
       description: 'Select the mode to be set to the air conditioner.'
-      default: dry
+      default: fan_only
       selector:
         select:
           mode: dropdown
           options:
             - heat
             - cool
-            - dry
             - fan_only
 
     fan_modes:
@@ -67,7 +66,7 @@ blueprint:
       description: 'Set the startup target temperature.'
       selector:
         number:
-          min: 15
+          min: 16
           max: 30
           unit_of_measurement: °C
           mode: slider
@@ -79,7 +78,7 @@ blueprint:
       description: 'Set the target temperature for shutdown.'
       selector:
         number:
-          min: 15
+          min: 16
           max: 30
           unit_of_measurement: °C
           mode: slider
@@ -92,7 +91,7 @@ blueprint:
       selector:
         number:
           min: 0
-          max: 30
+          max: 10
           unit_of_measurement: min
           mode: slider
           step: 1
@@ -200,5 +199,4 @@ action:
         type: notify
         device_id: !input notify_device
         title: "KLIMATYZACJA"
-        message: "{% if trigger.id == 'climate_off' %} Automatyczne wyłączenie klimatyzacji{% endif %}"
-          
+        message: "{% if trigger.id == 'climate_off' %} Automatyczne wyłączenie klimatyzacji przy temperaturze: {{state_attr(climate,'current_temperature')|float(0)}}{% endif %}°"          
