@@ -1,11 +1,6 @@
 blueprint:
-  name: Automatic air conditioner for winter and summer.
-  description:  "`- Version: 2.0 -`\n\n. 
-
-          Optionally, you can enable:
-          - Home presence control 
-          - Notifications
-          - Decide on the time slot for operation"
+  name: Auto klimatyzacja lato/zima.
+  description:  "`- Version: 2.0 -`\n\n"
 
   domain: automation
   input:
@@ -20,13 +15,13 @@ blueprint:
     season:
       name: Select season
       description: 'Select the season of use.'
-      default: Summer
+      default: Lato
       selector:
         select:
           mode: dropdown
           options:
-            - Summer
-            - Winter
+            - Lato
+            - Zima
 
     set_temperature_climate:
       name: Set temperature climate
@@ -174,11 +169,11 @@ trigger:
 - platform: state
   entity_id: !input presence_home
   from: 
-      - off
-      - on
+      - false
+      - true
   to: 
-      - off
-      - on
+      - false
+      - true
   id: presence_home
 
 action:
@@ -188,14 +183,14 @@ action:
     - condition: time
       after: !input start_time
       before: !input stop_time
-    - "{{ states(presence_home) == 'on' or presence_home == 'group.presence_home_disabled'}}"
+    - "{{ states(presence_home) == true or presence_home == 'input_boolean.presence_home_disabled'}}"
     - or: 
-      - "{{ (trigger.id == 'climate_on' or (trigger.id == 'presence_home' and trigger.to_state.state == 'on')) and season == 'Winter' and (state_attr(climate,'current_temperature')|float(0) < target_temperature_start|float(0) )}}"
-      - "{{ (trigger.id == 'climate_on' or (trigger.id == 'presence_home' and trigger.to_state.state == 'on')) and season == 'Summer' and (state_attr(climate,'current_temperature')|float(0) > target_temperature_start|float(0) )}}"
+      - "{{ (trigger.id == 'climate_on' or (trigger.id == 'presence_home' and trigger.to_state.state == true)) and season == 'Zima' and (state_attr(climate,'current_temperature')|float(0) < target_temperature_start|float(0) )}}"
+      - "{{ (trigger.id == 'climate_on' or (trigger.id == 'presence_home' and trigger.to_state.state == true)) and season == 'Lato' and (state_attr(climate,'current_temperature')|float(0) > target_temperature_start|float(0) )}}"
   then:
       - alias: Kontrola obecnosci w domu
         if: 
-          - " {{ presence_home == 'binary_sensor.presence_home_disabled' or states(presence_home) == 'on'}}"
+          - " {{ presence_home == 'input_boolean.presence_home_disabled' or states(presence_home) == true}}"
         then: 
           - service: climate.set_temperature
             data:
@@ -224,8 +219,8 @@ action:
     - "{{not is_state(climate,'off')}}"
     - or: 
       - "{{ trigger.id == 'presence_home' and trigger.to_state.state == 'off'}}"
-      - "{{ trigger.id == 'climate_off' and season == 'Winter' and (state_attr(climate,'current_temperature')|float(0) > target_temperature_stop|float(0) )}}"
-      - "{{ trigger.id == 'climate_off' and season == 'Summer' and (state_attr(climate,'current_temperature')|float(0) < target_temperature_stop|float(0) )}}"
+      - "{{ trigger.id == 'climate_off' and season == 'Zima' and (state_attr(climate,'current_temperature')|float(0) > target_temperature_stop|float(0) )}}"
+      - "{{ trigger.id == 'climate_off' and season == 'Lato' and (state_attr(climate,'current_temperature')|float(0) < target_temperature_stop|float(0) )}}"
       - "{{ trigger.id == 'climate_off' and trigger.platform == 'time'}}"
   then:
       - service: climate.turn_off
