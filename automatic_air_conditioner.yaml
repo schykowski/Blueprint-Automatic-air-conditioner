@@ -1,6 +1,6 @@
 blueprint:
-  name: Automatic air conditioner for winter and summer, monitoring presence, window status, water level and time slot.
-  description:  "`- Version: 1.0 -`\n\n This blueprint is for using the air conditioner automatically in both winter and summer, based on a start and end temperature. 
+  name: Automatic air conditioner for winter and summer.
+  description:  "`- Version: 2.0 -`\n\n. 
 
           Optionally, you can enable:
           - Home presence control 
